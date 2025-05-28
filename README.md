@@ -40,14 +40,6 @@ A minimal and intuitive to-do list web app built using **HTML**, **CSS**, and **
 - CSS3
 - JavaScript (Vanilla)
 
-## 📂 File Structure
-```📁 To-Do-App/
-├── index.html
-├── style.css (if extracted)
-├── script.js (if extracted)
-└── README.md```
-
-
 ## 🧠 How It Works
 
 1. Type a task into the input field
@@ -60,4 +52,13 @@ A minimal and intuitive to-do list web app built using **HTML**, **CSS**, and **
 - Add task due dates
 - Support categories/filters
 - Sync tasks across devices (with Firebase or backend)
+
+## 📂 File Structure
+```📁 To-Do-App/
+├── index.html
+├── style.css (if extracted)
+├── script.js (if extracted)
+└── README.md```
+
+
 
