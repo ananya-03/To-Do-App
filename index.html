@@ -72,15 +72,36 @@
             }
         })
 
-
         function addToDo(val){
             let list = document.createElement('li');
-            list.innerHTML = `${val}`;
+            list.innerHTML = `
+            <span class="task">${val}</span> 
+            <button class="update">Update</button> 
+            <i  class="delete fa-solid fa-trash"></i>
+            `;
             todo.appendChild(list);
+            const del = list.querySelector('.delete');
+            const update = list.querySelector('.update');
+            const task = list.querySelector('.task');
 
-            list.addEventListener('click', function(){
-                this.classList.toggle('done');
+            del.addEventListener('click',()=>{
+                list.remove();
             })
+
+            update.addEventListener('click',()=>{
+                const newText = prompt("Please update your task",task.textContent);
+                if(newText !== null && newText.trim() !== ''){
+                    task.textContent = newText.trim();
+                }
+            })
+
+            list.addEventListener('click', function(e){
+                if(!e.target.classList.contains('delete') && !e.target.classList.contains('update')){
+                    this.classList.toggle('done');
+                }
+                
+            })
+
         }
 
         const themeToggle = document.getElementById('theme-toggle');
