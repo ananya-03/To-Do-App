@@ -5,9 +5,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo App</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
     <style>
+        body {
+            background-image: url('todo-bg.png');
+        }
+
+        li,
+        h1 {
+            background-color: antiquewhite;
+        }
+
+        li {
+            font-size: 2em;
+        }
+
+        button {
+            border-radius: 10px;
+            font-size: large;
+            color: bisque;
+            background-color: rgb(51, 9, 9);
+        }
+
+        .delete {
+            color: rgb(51, 9, 9);
+            font-size: medium;
+        }
+
+        h1 {
+            font-size: 5em;
+            color: rgb(51, 9, 9);
+        }
+
+        body {
+            background-image: url('todo-bg.png');
+        }
+
+        .dark-mode li,
+        .dark-mode h1 {
+            background-color: rgb(51, 9, 9);
+        }
+
+        .dark-mode button {
+
+            color: rgb(51, 9, 9);
+            background-color: bisque;
+        }
+
+        .dark-mode .delete {
+            color: bisque;
+            font-size: medium;
+            background-color: transparent;
+        }
+
+        .dark-mode h1 {
+            color: bisque;
+            background-color: rgb(51, 9, 9);
+        }
+
         div {
             display: flex;
             flex-direction: column;
@@ -26,34 +82,44 @@
             text-align: center;
             width: 70%;
         }
-        .done{
+
+        .done {
             text-decoration: line-through;
         }
-        .dark-mode{
 
-        background-color: rgb(33, 27, 27);
-        color: white;
+        .dark-mode {
+            background-image: url('todo-dark-bg.png');
+            color: bisque;
         }
-        .dark-mode input{
-            background-color: #333;
+
+        .dark-mode input {
+            background-color: rgb(51, 9, 9);
             color: white;
             border: 2px solid white;
         }
-        i{
+
+        #theme-toggle {
             padding: 20px;
-            font-size: 20px;
+            font-size: 2em;
+            color: rgb(51, 9, 9);
+            background-color: bisque;
+            border-radius: 100%;
         }
-        #todo{
-            font-size: 20px;
+        .dark-mode #theme-toggle{
+            color: bisque;
+            background-color:rgb(51, 9, 9);
         }
 
+        #todo {
+            font-size: 20px;
+        }
     </style>
 </head>
 
 <body>
     <i class="fa-solid fa-moon" id="theme-toggle" style="cursor: pointer;"></i>
     <div>
-        
+
         <h1>To Do List</h1>
         <input id="write" type="text" placeholder="Add your tasks, hit enter">
         <ul id="todo">
@@ -65,14 +131,14 @@
         const input = document.getElementById('write');
         const todo = document.getElementById('todo');
 
-        input.addEventListener("keyup", function(k){
-            if (k.key == 'Enter'){
+        input.addEventListener("keyup", function (k) {
+            if (k.key == 'Enter') {
                 addToDo(this.value);
-                this.value='';//refreshes the input field to blank after hitting enter
+                this.value = '';//refreshes the input field to blank after hitting enter
             }
         })
 
-        function addToDo(val){
+        function addToDo(val, skipSave=false) {
             let list = document.createElement('li');
             list.innerHTML = `
             <span class="task">${val}</span> 
@@ -84,34 +150,68 @@
             const update = list.querySelector('.update');
             const task = list.querySelector('.task');
 
-            del.addEventListener('click',()=>{
+            del.addEventListener('click', () => {
                 list.remove();
+                removeFromLocalStorage(val);
             })
 
-            update.addEventListener('click',()=>{
-                const newText = prompt("Please update your task",task.textContent);
-                if(newText !== null && newText.trim() !== ''){
+            update.addEventListener('click', () => {
+                const newText = prompt("Please update your task", task.textContent);
+                if (newText !== null && newText.trim() !== '') {
+                    updateLocalStorage(val, newText.trim());
                     task.textContent = newText.trim();
                 }
             })
 
-            list.addEventListener('click', function(e){
-                if(!e.target.classList.contains('delete') && !e.target.classList.contains('update')){
+            list.addEventListener('click', function (e) {
+                if (!e.target.classList.contains('delete') && !e.target.classList.contains('update')) {
                     this.classList.toggle('done');
                 }
-                
+
             })
+            if(!skipSave){
+                saveToLocalStorage(val);
+            }
+            
 
         }
 
+        function saveToLocalStorage(task) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push(task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function updateLocalStorage(oldTask, newTask) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const index = tasks.indexOf(oldTask);
+            if (index !== -1) {
+                tasks[index] = newTask;
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+            }
+        }
+
+        function removeFromLocalStorage(task) {
+            tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks = tasks.filter(t => t !== task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        window.addEventListener('load', () => {
+            tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(task => addToDo(task, true));
+        });
+
+
         const themeToggle = document.getElementById('theme-toggle');
 
-        themeToggle.addEventListener('click', ()=>{
+        themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             themeToggle.classList.toggle('fa-sun');
             themeToggle.classList.toggle('fa-moon')
-            
+
         })
+
 
     </script>
 
